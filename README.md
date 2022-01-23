@@ -1,2 +1,6 @@
 # Canopen
 
+## Build
+```
+make build
+```
