@@ -83,7 +83,7 @@ static void filenames_section(char *line)
 		if (duplicated_token(MASK_TOKEN_LOGFILE) != GEN_RETOK) return;
 		if (parse_string(fname, line+npos, '=', STR_FILE_NAME_SIZE, &npos) == GEN_RETOK) {
 			clip_string(fname, STR_FILE_NAME_SIZE);
-			transform_file_name(log_file_name, fname);
+			// transform_file_name(log_file_name, fname);
 			return;
 		}
 		invalid_value();
@@ -288,7 +288,7 @@ void read_config(void)
 	int32 buf;
 	unsigned16 fver, fcom, clin, npos;
 
-	transform_file_name(file_name, MASTER_CONFIG_FILE_NAME);
+	// transform_file_name(file_name, MASTER_CONFIG_FILE_NAME);
 	filpds = fopen(file_name, "r");
 	if (filpds == NULL) {
 		master_event(EVENT_CLASS_MASTER_CONFIG, EVENT_TYPE_ERROR, EVENT_CODE_FILE_OPEN, EVENT_INFO_DUMMY);

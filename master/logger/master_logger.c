@@ -36,7 +36,7 @@ static void process_logger_file(void)		// 1.1.1 fallback to the default log file
 		logger_file = fopen(active_file_name, "w");
 		if (logger_file == NULL) {
 			master_event(EVENT_CLASS_MASTER_LOGGER, EVENT_TYPE_ERROR, EVENT_CODE_LOGGER_FOPEN, EVENT_INFO_DUMMY);
-			transform_file_name(log_file_name, MASTER_LOG_FILE_NAME_DEF);
+			// transform_file_name(log_file_name, MASTER_LOG_FILE_NAME_DEF);
 			time_stamp_file_name(active_file_name, log_file_name);
 			logger_file = fopen(active_file_name, "w");
 		}

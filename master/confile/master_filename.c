@@ -2,6 +2,7 @@
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
+#ifdef CAN_OS_WIN32
 void transform_file_name(char *fname, char *initfn)
 {
 	unsigned16 slhp, cnt, c1;
@@ -34,6 +35,7 @@ void transform_file_name(char *fname, char *initfn)
 	}
 	fname[STR_FILE_NAME_SIZE-1] = '\0';
 }
+#endif
 
 void time_stamp_file_name(char *fname, char *initfn)	// 1.1.1 renamed
 {

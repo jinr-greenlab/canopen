@@ -5,7 +5,7 @@
 #define MAJ_VERS_CANLIB		3	// Major CANopen library software version
 #define MIN_VERS_CANLIB		0	// Minor CANopen library software version
 #define RELEASE_CANLIB		0	// The CANopen library software release
-
+#define CAN_OS_LINUX
 
 #ifndef FALSE
 #define FALSE			0
@@ -531,3 +531,27 @@
 // *** CAN_NOF_... - various reserved numbers ***
 
 #define CAN_NOF_PDOBIT_MAX			64	// Maximum PDO length in BIT
+
+#define CAN_NOF_NODES				127	// Number of nodes in the CAN network
+
+#define CAN_NOF_PREDEF_ERRORS		8	// Maximum number of registered errors in Pre-defined Error Field (1..254)
+
+#define CAN_NOF_ERRBEH_SUBIND		1	// Highest sub-index of the error behaviour object (1..254)
+#define CAN_SUBIND_ERRBEH_COMM		1	// Communication error behaviour subindex
+
+#define CAN_NOF_MAP					8	// Maximum number of PDO mapped application objects (1..64)
+										// May be set for each RPDO and TPDO individually.
+										// Applicable only for dynamic PDOs with one bit granularity.
+
+#define CAN_NOF_SDO_SERVER			1	// No of server SDO parameters (communication object dictionary entries)
+
+#define CAN_NOF_PDO_RECV_SLAVE		4	// No of receive PDO parameters (obj. dict. entries) for the Server
+#define CAN_NOF_PDO_TRAN_SLAVE		4	// No of transmit PDO parameters (obj. dict. entries) for the Server
+
+#define CAN_NOF_RECVCANID_SLAVE		(3 + CAN_NOF_PDO_RECV_SLAVE + CAN_NOF_PDO_TRAN_SLAVE)
+										// Number of Receive DYNAMIC CAN-IDs for the Server/Slave
+										// SYNC, TIME STAMP, RPDO1..4, TPDO1..4(RTR), SDO.
+										// Not needed for NMTs and Error
+
+#define CAN_NOF_RECVCANID_MASTER	64	// Number of Receive DYNAMIC CAN-IDs for the Client/Master
+#define CAN_NOF_SYNCPDO_MASTER		64	// Synchronous RPDO and TPDO buffer sizes for the Master, 2.3.0

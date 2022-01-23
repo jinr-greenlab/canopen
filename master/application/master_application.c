@@ -56,7 +56,7 @@ void init_defaults(void)	// 1.1.1 some changes
 
 	can_network = CAN_NETWORK_CONTROLLER;
 	bitrate_index = CAN_BITRATE_INDEX;
-	transform_file_name(log_file_name, MASTER_LOG_FILE_NAME_DEF);
+	// transform_file_name(log_file_name, MASTER_LOG_FILE_NAME_DEF);
 	for (node = 0; node <= CAN_NODE_ID_MAX; node++) {
 		memset(can_node+node, 0, sizeof(struct canopennode));
 		can_node[node].node_status = OFF;

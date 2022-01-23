@@ -1,13 +1,20 @@
 // *** CANopen data type definitions ***
 
+#ifdef CAN_OS_LINUX
+typedef signed long long        int64;
+typedef unsigned long long      unsigned64;
+#endif
+#ifdef CAN_OS_WIN32
+typedef LONGLONG                        int64;
+typedef ULONGLONG                       unsigned64;
+#endif
+
 typedef	signed char			int8;
 typedef	unsigned char		unsigned8;
 typedef	signed short		int16;
 typedef	unsigned short		unsigned16;
 typedef	signed int			int32;
 typedef	unsigned int		unsigned32;
-typedef	LONGLONG			int64;
-typedef	ULONGLONG			unsigned64;
 typedef	float				real32;
 typedef	double				real64;
 

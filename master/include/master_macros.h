@@ -5,6 +5,22 @@
 #define CHECK_VERSION_CANLIB(MAJ, MIN, REL)   ((MAJ == MAJ_VERS_CANLIB) && (MIN == MIN_VERS_CANLIB) && (REL >= RELEASE_CANLIB))
 #define CHECK_VERSION_APPL(MAJ, MIN, REL)   ((MAJ == MAJ_VERS_APPL) && (MIN == MIN_VERS_APPL) && (REL >= RELEASE_APPL))
 
-#define CAN_CRITICAL_INIT    init_critical();
-#define CAN_CRITICAL_BEGIN   enter_critical();
-#define CAN_CRITICAL_END     leave_critical();
+#define OBJECT_DICTIONARY_TO_CANOPEN for (cnt = 0; cnt < size; cnt++) { \
+		*data = *bpnt;  \
+		data++; bpnt++; \
+}
+
+#define FROM_CANOPEN_TO_OBJECT_DICTIONARY for (cnt = 0; cnt < size; cnt++) { \
+		*bpnt = *data;  \
+		bpnt++; data++; \
+}
+
+#ifdef CAN_OS_WIN32
+	#define CAN_CRITICAL_INIT    init_critical();
+	#define CAN_CRITICAL_BEGIN   enter_critical();
+	#define CAN_CRITICAL_END     leave_critical();
+#else
+	#define CAN_CRITICAL_INIT
+	#define CAN_CRITICAL_BEGIN
+	#define CAN_CRITICAL_END
+#endif
