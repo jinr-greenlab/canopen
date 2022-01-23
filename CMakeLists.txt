@@ -3,3 +3,4 @@ project(canopen)
 
 add_subdirectory(chai)
 add_subdirectory(master)
+add_subdirectory(demo)
