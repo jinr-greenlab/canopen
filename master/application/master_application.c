@@ -14,7 +14,6 @@ static void reset_can_network(void)
 		if (can_node[node].node_status == ON) {
 			node_event(node, EVENT_CLASS_NODE_STATE, EVENT_TYPE_INFO, EVENT_CODE_NODE_RESET, EVENT_INFO_DUMMY);
 		}
-		push_events_logger();
 		can_sleep(10*CAN_SLEEP_ONE_MILLISEC);	// 10 Kbit/S match
 	}
 }
@@ -30,13 +29,12 @@ void reset_can_node(cannode node)
 
 void application_timer_routine(void)
 {
-//	flush_events_cache();		// Not needed here, called within push_events_logger()
+
 }
 
 void application_monitor_routine(void)
 {
 	configure_can_nodes();
-	push_events_logger();		// Logger
 }
 
 void start_can_network(void)

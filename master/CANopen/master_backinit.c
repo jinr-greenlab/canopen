@@ -60,7 +60,6 @@ int16 start_can_master(void)
 
 	init_defaults();
 	CAN_CRITICAL_INIT	// Init critical section - needed for the logger
-	init_logger();
 	// We removed confile module because we don't want to support custom config format
 	// Instead we are going to use a widely used format like yaml with one of standard parsing libraries
 	// Anyway read_config just sets some of global variables
@@ -100,7 +99,6 @@ int16 stop_can_master(void)   // 3.0.4 return conditions changed
 	disable_can_transmitter();
 	CiStop(can_network);
 	CiClose(can_network);
-	close_logger();
 	return CAN_RETOK;
 }
 

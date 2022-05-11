@@ -19,12 +19,10 @@ static void monitor(void)
 int main(void)
 {
 	if (start_can_master() != CAN_RETOK) {
-		close_logger();
 		return CAN_ERRET_MAIN;
 	}
 	while (TRUE) monitor();
 	if (stop_can_master() != CAN_RETOK) {
-		close_logger();
 		return CAN_ERRET_MAIN;
 	}
 	return CAN_RETURN_MAIN;

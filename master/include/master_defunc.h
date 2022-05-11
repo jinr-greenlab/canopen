@@ -101,30 +101,21 @@ void can_init_pdo(void);
 int16 read_device_object(cannode node, canindex index, cansubind subind, canbyte *data, unsigned32 datasize);
 int16 write_device_object(cannode node, canindex index, cansubind subind, canbyte *data, unsigned32 datasize);
 
-
-// ..confile\master_filename.c functions below
-void transform_file_name(char *fname, char *initfn);
-void time_stamp_file_name(char *fname, char *initfn);
-
-// ..confile\master_pac.c functions below
-int16 find_token(char *dtok, char *data, unsigned16 *npos);
-int16 parse_float(union numbers *num, char *data, unsigned16 dtype, unsigned16 *npos);
-int16 parse_integer(union numbers *num, char *data, unsigned16 dtype, int16 base, unsigned16 *npos);
-int16 parse_number(union numbers *num, char *data, unsigned16 dtype, unsigned16 *npos);
-int16 parse_string(char *dest, char *src, char ignore, int16 strlen, unsigned16 *npos);
-void clip_string(char *src, int16 strlen);
-
-
 // ..logger\master_logfile.c functions below
-void write_event_to_file(struct eventlog *ev, FILE *log);
+// void write_event_to_file(struct eventlog *ev, FILE *log);
 
 // ..logger\master_logger.c functions below
-void flush_events_cache(void);
-void log_event(struct eventlog *ev);
-void push_events_logger(void);
+// void flush_events_cache(void);
+// void log_event(struct eventlog *ev);
+// void push_events_logger(void);
+// void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info);
+// void node_event(cannode node, unsigned8 cls, unsigned8 type, int16 code, int32 info);
+// void close_logger(void);
+// void init_logger(void);
+
+// ..CANopen/logger.c
 void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info);
 void node_event(cannode node, unsigned8 cls, unsigned8 type, int16 code, int32 info);
-void close_logger(void);
-void init_logger(void);
+
 
 #endif
