@@ -61,7 +61,13 @@ int16 start_can_master(void)
 	init_defaults();
 	CAN_CRITICAL_INIT	// Init critical section - needed for the logger
 	init_logger();
-	read_config();
+	// We removed confile module because we don't want to support custom config format
+	// Instead we are going to use a widely used format like yaml with one of standard parsing libraries
+	// Anyway read_config just sets some of global variables
+	// can_network
+	// bitrate_index
+	// can_node
+	// read_config();
 	if (CiInit() < 0) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_INIT, EVENT_INFO_DUMMY);
 		return CAN_ERRET_CI_INIT;

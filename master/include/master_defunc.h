@@ -102,9 +102,6 @@ int16 read_device_object(cannode node, canindex index, cansubind subind, canbyte
 int16 write_device_object(cannode node, canindex index, cansubind subind, canbyte *data, unsigned32 datasize);
 
 
-// ..confile\master_config_file.c functions below
-void read_config(void);
-
 // ..confile\master_filename.c functions below
 void transform_file_name(char *fname, char *initfn);
 void time_stamp_file_name(char *fname, char *initfn);
