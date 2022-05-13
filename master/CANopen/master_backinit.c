@@ -4,19 +4,17 @@
 
 static int16 sem_sys=-1024;
 
-static void canopen_timer(void)		// 3.0.1 renamed
+// FIXME: Figure out what does this function do.
+static void canopen_timer(void)
 {
-	CAN_CRITICAL_BEGIN
 	sem_sys++;
 	if (sem_sys == 0) {
-		application_timer_routine();
 		control_sync();
 		can_client_control();
 		manage_master_ecp();
 		push_all_can_data();
 	}
 	sem_sys--;
-	CAN_CRITICAL_END
 }
 
 static int16 set_controller_bitrate(unsigned8 br_index)
@@ -54,19 +52,11 @@ static int16 can_init_controller(void)
 	return set_controller_bitrate(bitrate_index);
 }
 
+
 int16 start_can_master(void)
 {
 	int16 fnr;
-
-	init_defaults();
-	CAN_CRITICAL_INIT	// Init critical section - needed for the logger
-	// We removed confile module because we don't want to support custom config format
-	// Instead we are going to use a widely used format like yaml with one of standard parsing libraries
-	// Anyway read_config just sets some of global variables
-	// can_network
-	// bitrate_index
-	// can_node
-	// read_config();
+	configure();
 	if (CiInit() < 0) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_INIT, EVENT_INFO_DUMMY);
 		return CAN_ERRET_CI_INIT;
@@ -80,8 +70,7 @@ int16 start_can_master(void)
 	can_init_io();
 	can_init_pdo();
 	can_init_sync();
-	enable_can_transmitter();
-	can_init_system_timer(canopen_timer);		// 2.3.1 API changed. Before can_init_controller() for Windows only
+	can_init_system_timer(canopen_timer);
 	fnr = can_init_controller();
 	if (fnr != CAN_RETOK) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, fnr, EVENT_INFO_DUMMY);
@@ -96,14 +85,9 @@ int16 stop_can_master(void)   // 3.0.4 return conditions changed
 {
 	sem_sys = -1024;
 	can_cancel_system_timer();
-	disable_can_transmitter();
 	CiStop(can_network);
 	CiClose(can_network);
 	return CAN_RETOK;
-}
-
-void canopen_monitor(void)
-{
 }
 
 #endif

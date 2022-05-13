@@ -17,15 +17,12 @@ static void resetcanwork(void)
 
 void can_client_control(void)
 {
-	CAN_CRITICAL_BEGIN
 	sem_resetcan++;
 	if (sem_resetcan != 0) {
 		sem_resetcan--;
-		CAN_CRITICAL_END
 		flag_resetcan++;
 		return;
 	}
-	CAN_CRITICAL_END
 	if (cltbasic.busy >= 0) {
 		cltbasic.timeout--;
 		if (cltbasic.timeout == 0) {
@@ -38,23 +35,17 @@ void can_client_control(void)
 			}
 		}
 	}
-	CAN_CRITICAL_BEGIN
 	sem_resetcan--;
-	CAN_CRITICAL_END
 }
 
 static void contcan_lock(void)
 {
-	CAN_CRITICAL_BEGIN
 	sem_resetcan++;
-	CAN_CRITICAL_END
 }
 
 static void contcan_unlock(void)
 {
-	CAN_CRITICAL_BEGIN
 	sem_resetcan--;
-	CAN_CRITICAL_END
 	while (flag_resetcan > 0) {
 		if (sem_resetcan != -1) break;
 		can_client_control();

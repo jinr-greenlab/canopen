@@ -1,7 +1,6 @@
 #include <master_header.h>
 
 #define CAN_TIMERUSEC_MIN		100	// Minimum background timer period in microseconds.
-#define CAN_OS_LINUX
 
 #ifdef CAN_OS_LINUX
 void can_sleep(int32 microseconds)
@@ -57,27 +56,4 @@ void can_cancel_system_timer(void)
 	setitimer(ITIMER_REAL, &val, NULL);
 }
 
-void enable_can_transmitter(void)
-{
-}
-
-void disable_can_transmitter(void)
-{
-}
-
-void green_led_on(void)
-{
-}
-
-void green_led_off(void)
-{
-}
-
-void red_led_on(void)
-{
-}
-
-void red_led_off(void)
-{
-}
 #endif

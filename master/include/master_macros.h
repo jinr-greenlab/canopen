@@ -15,12 +15,6 @@
 		bpnt++; data++; \
 }
 
-#ifdef CAN_OS_WIN32
-	#define CAN_CRITICAL_INIT    init_critical();
-	#define CAN_CRITICAL_BEGIN   enter_critical();
-	#define CAN_CRITICAL_END     leave_critical();
-#else
-	#define CAN_CRITICAL_INIT
-	#define CAN_CRITICAL_BEGIN
-	#define CAN_CRITICAL_END
-#endif
+#define CAN_CRITICAL_INIT
+#define CAN_CRITICAL_BEGIN
+#define CAN_CRITICAL_END
