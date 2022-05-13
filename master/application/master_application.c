@@ -27,25 +27,10 @@ void reset_can_node(cannode node)
 	nmt_master_command(CAN_NMT_RESET_NODE, node);
 }
 
-void application_timer_routine(void)
-{
-
-}
-
-void application_monitor_routine(void)
-{
-	configure_can_nodes();
-}
-
 void start_can_network(void)
 {
 	master_event(EVENT_CLASS_MASTER_STATUS, EVENT_TYPE_INFO, EVENT_CODE_MASTER_RUNNING, EVENT_INFO_DUMMY);
 	reset_can_network();
-
-//	write_sync_data(CAN_INDEX_SYNC_PERIOD, 0);
-//	write_sync_data(CAN_INDEX_SYNC_OVERFLOW, 17);
-//	write_sync_data(CAN_INDEX_SYNC_PERIOD, 1000000);
-//	write_sync_data(CAN_INDEX_SYNC_COBID, MASK_SYNC_GENERATE | CAN_COBID_SYNC);
 }
 
 void init_defaults(void)	// 1.1.1 some changes
@@ -62,6 +47,25 @@ void init_defaults(void)	// 1.1.1 some changes
 	}
 	can_node[0].node_status = ON;	// Master
 	can_node[0].nmt_state = CAN_NODE_STATE_OPERATIONAL;
+}
+
+// FIXME: read config from a config file
+void configure(void)
+{
+    init_defaults();
+
+    can_node[127].node_status = ON;
+    can_node[127].DeviceType = 0x008C0191;
+    can_node[127].maskdev |= MASK_DEV_DEVICETYPE;
+    can_node[127].VendorID = 0x000000BE;
+    can_node[127].maskdev |= MASK_DEV_VENDORID;
+    can_node[127].ProductCode = 0x00910001;
+    can_node[127].maskdev |= MASK_DEV_PRODUCTCODE;
+    can_node[127].Revision = 0x00010001;
+    can_node[127].maskdev |= MASK_DEV_REVISION;
+
+    configure_can_nodes();
+
 }
 
 #endif

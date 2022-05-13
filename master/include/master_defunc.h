@@ -1,15 +1,10 @@
 #ifndef __MASTER_DEFUNC_H__
 #define __MASTER_DEFUNC_H__
 
-// System dependent functions
+// ..CANopen/system.c
 void can_sleep(int32 microseconds);
 void can_init_system_timer(void (*handler)(void));
 void can_cancel_system_timer(void);
-void init_critical(void);
-void enter_critical(void);
-void leave_critical(void);
-void enable_can_transmitter(void);
-void disable_can_transmitter(void);
 
 // ..CANopen\master_backinit.c functions below
 int16 start_can_master(void);
@@ -70,10 +65,9 @@ void abort_can_sdo(struct sdoixs *si, unsigned32 abortcode);
 
 // ..application\master_application.c functions below
 void reset_can_node(cannode node);
-void application_timer_routine(void);
-void application_monitor_routine(void);
 void start_can_network(void);
 void init_defaults(void);
+void configure(void);
 
 // ..application\master_can_nodes functions below
 void configure_can_nodes(void);
@@ -100,18 +94,6 @@ void can_init_pdo(void);
 // ..application\master_sdo_transfer.c functions below
 int16 read_device_object(cannode node, canindex index, cansubind subind, canbyte *data, unsigned32 datasize);
 int16 write_device_object(cannode node, canindex index, cansubind subind, canbyte *data, unsigned32 datasize);
-
-// ..logger\master_logfile.c functions below
-// void write_event_to_file(struct eventlog *ev, FILE *log);
-
-// ..logger\master_logger.c functions below
-// void flush_events_cache(void);
-// void log_event(struct eventlog *ev);
-// void push_events_logger(void);
-// void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info);
-// void node_event(cannode node, unsigned8 cls, unsigned8 type, int16 code, int32 info);
-// void close_logger(void);
-// void init_logger(void);
 
 // ..CANopen/logger.c
 void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info);

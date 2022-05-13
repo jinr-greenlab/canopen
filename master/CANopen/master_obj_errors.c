@@ -1,11 +1,6 @@
 #include <master_header.h>
 
 #if CHECK_VERSION_CANLIB(3, 0, 1)
- // CHECK_VERSION(2, 3, 4)
-//  CHECK_VERSION(2, 2, 1)
-//  CHECK_VERSION(2, 1, 2)
-//  CHECK_VERSION(2, 0, 2)
-//  CHECK_VERSION(1, 7, 0)
 
 #if CAN_APPLICATION_MODE == SLAVE || CAN_APPLICATION_MODE == TEST
 
@@ -102,7 +97,6 @@ void set_error_field(unsigned16 errorcode, unsigned16 addinf)
 		erreg = 0;
 		return;
 	}
-	CAN_CRITICAL_BEGIN		// 2.3.3 OS related applications, NO data loss.
 	sem_error++;
 	if (sem_error == 0) {
 		if (numerr == CAN_NOF_PREDEF_ERRORS) numerr--;
@@ -114,7 +108,6 @@ void set_error_field(unsigned16 errorcode, unsigned16 addinf)
 		flag_error = 1;
 	}
 	sem_error--;
-	CAN_CRITICAL_END
 	errorcode &= 0xFF00;				// 2.3.4
 	if (errorcode == 0x0000) return;	// 2.3.2
 	erreg |= CAN_ERRBIT_GENERIC;

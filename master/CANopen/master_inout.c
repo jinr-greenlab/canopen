@@ -11,12 +11,10 @@ void push_all_can_data(void)
 {
 	unsigned16 cnt;
 
-	CAN_CRITICAL_BEGIN
 	do {
 		flag_cantrans = 0;
 		sem_cantrans++;
 		if (sem_cantrans == 0) {
-			CAN_CRITICAL_END
 			for (cnt = 0; cnt < CAN_WRITECACHE_SIZE; cnt++) {
 				if (flag_cantrans != 0) break;
 				if (cancache[cnt].capture != 255) continue;		// 2.2.2
@@ -24,12 +22,10 @@ void push_all_can_data(void)
 				cancache[cnt].capture = 0;
 				cancache[cnt].busy = -1;
 			}
-			CAN_CRITICAL_BEGIN
 		}
 		sem_cantrans--;
 	} while (flag_cantrans != 0);
 	flag_cantrans = 1;
-	CAN_CRITICAL_END
 }
 
 int16 send_can_data(canframe *cf)		// 3.0.1 API changed
@@ -43,46 +39,33 @@ int16 send_can_data(canframe *cf)		// 3.0.1 API changed
 	else cabg = 4;
 	wrac = CAN_WRITECACHE_ATTEMPTS;
 	do {
-		CAN_CRITICAL_BEGIN
 		sem_cantrans++;
-		CAN_CRITICAL_END
 		for (cnt = cabg; cnt < CAN_WRITECACHE_SIZE; cnt++) {
-			CAN_CRITICAL_BEGIN
 			cancache[cnt].busy++;
 			if (cancache[cnt].busy == 0) {
-				CAN_CRITICAL_END
 				if (cancache[cnt].capture == 0) {
 					cancache[cnt].capture = 1;
 					cancache[cnt].cf = *cf;
 					cancache[cnt].capture = 255;		// 2.2.2
-					CAN_CRITICAL_BEGIN
 					sem_cantrans--;
-					CAN_CRITICAL_END
 					push_all_can_data();
 					return CAN_RETOK;
 				}
 			} else {
 				cancache[cnt].busy--;
-				CAN_CRITICAL_END
 			}
 		}
-		CAN_CRITICAL_BEGIN
 		sem_cantrans--;
-		CAN_CRITICAL_END
 		if (sem_cantrans != -1) break;
 		push_all_can_data();
 		can_sleep(CAN_WRITECACHE_DELAY);
 		wrac--;
 	} while (wrac > 0);
-	CAN_CRITICAL_BEGIN
 	sem_overflow++;
 	if (sem_overflow == 0) {
-		CAN_CRITICAL_END
 		can_cache_overflow();
-		CAN_CRITICAL_BEGIN
 	}
 	sem_overflow--;
-	CAN_CRITICAL_END
 	return CAN_ERRET_COMM_SEND;
 }
 
@@ -127,19 +110,15 @@ void can_read_handler(canev ev)
 {
 	canframe cf;
 
-	CAN_CRITICAL_BEGIN
 	do {
 		flag_canrecv = 0;
 		sem_canrecv++;
 		if (sem_canrecv == 0) {
-			CAN_CRITICAL_END
 			while (CiRead(can_network, &cf, 1) > 0) receive_can_data(&cf);
-			CAN_CRITICAL_BEGIN
 		}
 		sem_canrecv--;
 	} while (flag_canrecv != 0);
 	flag_canrecv = 1;
-	CAN_CRITICAL_END
 }
 
 void can_init_io(void)
