@@ -21,3 +21,6 @@
 
 #define CAN_CONFIG_NODE_MS			5000	// Configure node timeout and reset if failed, ms
 #define CAN_RESET_NODE_MS			10000	// Reset node period for non-responding node, ms
+
+// FIXME: This is not needed. Left it here because it is used in logging.
+#define MASTER_CONFIG_FILE_VERSION	0x00030001
