@@ -28,7 +28,7 @@ unsigned8 check_canid_restricted(canlink canid);
 
 // ..CANopen\master_inout.c functions below
 void push_all_can_data(void);
-int16 send_can_data(canframe *cf);		// 3.0.1 API changed
+int16 send_can_data(canframe *cf);        // 3.0.1 API changed
 void can_read_handler(canev ev);
 void can_init_io(void);
 
