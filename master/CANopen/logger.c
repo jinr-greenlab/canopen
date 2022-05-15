@@ -9,7 +9,7 @@ void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info)
 void node_event(cannode node, unsigned8 cls, unsigned8 type, int16 code, int32 info)
 {
 	struct eventlog ev;
-    syslog(LOG_DEBUG, "Logging event: node_id: %04d cls: %04d type: %04d code: %08d info: %08d", node, cls, type, code, info);
+    syslog(LOG_DEBUG, "Logging event: node_id: %d cls: %d type: %d code: %d info: %d", node, cls, type, code, info);
 
 	memset(&ev, 0, sizeof(struct eventlog));
 	ev.node = node;

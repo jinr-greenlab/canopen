@@ -99,5 +99,7 @@ int16 write_device_object(cannode node, canindex index, cansubind subind, canbyt
 void master_event(unsigned8 cls, unsigned8 type, int16 code, int32 info);
 void node_event(cannode node, unsigned8 cls, unsigned8 type, int16 code, int32 info);
 
+// ..CANopen/master_logfile.c
+void log_event(struct eventlog *ev);
 
 #endif
