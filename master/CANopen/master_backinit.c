@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <master_header.h>
 
 #if CHECK_VERSION_CANLIB(3, 0, 4)
@@ -56,27 +57,39 @@ static int16 can_init_controller(void)
 int16 start_can_master(void)
 {
 	int16 fnr;
-	configure();
+	printf("Configuring ...\n");
+    configure();
+
+    printf("CiInit ...\n");
 	if (CiInit() < 0) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_INIT, EVENT_INFO_DUMMY);
 		return CAN_ERRET_CI_INIT;
 	}
+    printf("CiOpen ...\n");
 	if (CiOpen(can_network, 0) < 0) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_OPEN, EVENT_INFO_DUMMY);
 		return CAN_ERRET_CI_OPEN;
 	}
+    printf("can_init_client\n");
 	can_init_client();
+    printf("can_init_sdo_client\n");
 	can_init_sdo_client();
+    printf("can_init_io\n");
 	can_init_io();
+    printf("can_init_pdo\n");
 	can_init_pdo();
+    printf("can_init_sync\n");
 	can_init_sync();
+    printf("can_init_system_timer\n");
 	can_init_system_timer(canopen_timer);
-	fnr = can_init_controller();
+	printf("can_init_controller\n");
+    fnr = can_init_controller();
 	if (fnr != CAN_RETOK) {
 		master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, fnr, EVENT_INFO_DUMMY);
 		return fnr;
 	}
 	sem_sys = -1;
+    printf("start_can_network\n");
 	start_can_network();
 	return CAN_RETOK;
 }
