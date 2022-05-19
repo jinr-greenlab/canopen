@@ -1,4 +1,5 @@
 #include <master_header.h>
+#include "config_parser.c"
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
@@ -37,9 +38,6 @@ void init_defaults(void)    // 1.1.1 some changes
 {
     cannode node;
 
-    can_network = CAN_NETWORK_CONTROLLER;
-    bitrate_index = CAN_BITRATE_INDEX;
-    // transform_file_name(log_file_name, MASTER_LOG_FILE_NAME_DEF);
     for (node = 0; node <= CAN_NODE_ID_MAX; node++) {
         memset(can_node+node, 0, sizeof(struct canopennode));
         can_node[node].node_status = OFF;
@@ -53,19 +51,8 @@ void init_defaults(void)    // 1.1.1 some changes
 void configure(void)
 {
     init_defaults();
-
-    can_node[127].node_status = ON;
-    can_node[127].DeviceType = 0x008C0191;
-    can_node[127].maskdev |= MASK_DEV_DEVICETYPE;
-    can_node[127].VendorID = 0x000000BE;
-    can_node[127].maskdev |= MASK_DEV_VENDORID;
-    can_node[127].ProductCode = 0x00910001;
-    can_node[127].maskdev |= MASK_DEV_PRODUCTCODE;
-    can_node[127].Revision = 0x00010001;
-    can_node[127].maskdev |= MASK_DEV_REVISION;
-
+    configParser();
     configure_can_nodes();
-
 }
 
 #endif
