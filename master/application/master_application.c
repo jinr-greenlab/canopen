@@ -1,5 +1,5 @@
 #include <master_header.h>
-#include "config_parser.c"
+#include <config_parser.h>
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
@@ -51,7 +51,7 @@ void init_defaults(void)    // 1.1.1 some changes
 void configure(void)
 {
     init_defaults();
-    configParser();
+    config_parser();
     configure_can_nodes();
 }
 

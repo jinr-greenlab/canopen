@@ -42,7 +42,7 @@ static void consume_revision(yaml_event_t * e, long node) {
     can_node[node].maskdev |= MASK_DEV_REVISION;
 }
 
-int configParser(void)
+int config_parser(void)
 {
     yaml_parser_t parser;
     yaml_event_t event;
