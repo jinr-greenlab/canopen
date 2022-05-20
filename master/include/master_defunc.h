@@ -62,6 +62,8 @@ void parse_sdo(struct cansdo *sd, canbyte *data);
 int16 send_can_sdo(struct cansdo *sd);
 void abort_can_sdo(struct sdoixs *si, unsigned32 abortcode);
 
+// ..application/config_parser.c
+int config_parser(void);
 
 // ..application\master_application.c functions below
 void reset_can_node(cannode node);
