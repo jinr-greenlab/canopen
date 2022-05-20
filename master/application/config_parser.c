@@ -1,6 +1,6 @@
+#include <master_header.h>
 #include <string.h>
 #include <yaml.h>
-#include <master_header.h>
 
 enum state {
     NO,
@@ -16,7 +16,7 @@ enum state_node {
     PRODUCTCODE,
     REVISION
 };
-long consume_node_id(yaml_event_t * e) {
+static long consume_node_id(yaml_event_t * e) {
     return strtrol((char *)e->data.scalar.value, NULL, 16);
 }
 static void consume_can_network(yaml_event_t * e) {
