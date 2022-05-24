@@ -17,28 +17,28 @@ enum state_node {
     REVISION
 };
 static long consume_node_id(yaml_event_t * e) {
-    return strtrol((char *)e->data.scalar.value, NULL, 16);
+    return strtol((char *)e->data.scalar.value, NULL, 16);
 }
 static void consume_can_network(yaml_event_t * e) {
-    can_network = strtol((char *)e->data.scalar.value, NULL, 16); 
+    can_network = strtol((char *)e->data.scalar.value, NULL, 16);
 }
 static void consume_bitrate_index(yaml_event_t * e) {
-    bitrate_index = strtol((char *)e->data.scalar.value, NULL, 16); 
+    bitrate_index = strtol((char *)e->data.scalar.value, NULL, 16);
 }
 static void consume_device_type(yaml_event_t * e, long node) {
     can_node[node].DeviceType = strtol((char *)e->data.scalar.value, NULL, 16);
-    can_node[node].maskdev |= MASK_DEV_DEVICETYPE; 
+    can_node[node].maskdev |= MASK_DEV_DEVICETYPE;
 }
 static void consume_vendor_id(yaml_event_t * e, long node) {
-    can_node[node].VendorID = strtol((char *)e->data.scalar.value, NULL, 16); 
+    can_node[node].VendorID = strtol((char *)e->data.scalar.value, NULL, 16);
     can_node[node].maskdev |= MASK_DEV_VENDORID;
 }
 static void consume_product_code(yaml_event_t * e, long node) {
-    can_node[node].ProductCode = strtol((char *)e->data.scalar.value, NULL, 16); 
+    can_node[node].ProductCode = strtol((char *)e->data.scalar.value, NULL, 16);
     can_node[node].maskdev |= MASK_DEV_PRODUCTCODE;
 }
 static void consume_revision(yaml_event_t * e, long node) {
-    can_node[node].Revision = strtol((char *)e->data.scalar.value, NULL, 16); 
+    can_node[node].Revision = strtol((char *)e->data.scalar.value, NULL, 16);
     can_node[node].maskdev |= MASK_DEV_REVISION;
 }
 
@@ -121,5 +121,5 @@ int config_parser(void)
         done = (event.type == YAML_STREAM_END_EVENT);
         yaml_event_delete(&event);
     }
-    return 0;  
+    return 0;
 }

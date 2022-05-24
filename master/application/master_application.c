@@ -1,5 +1,4 @@
 #include <master_header.h>
-#include <config_parser.h>
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
