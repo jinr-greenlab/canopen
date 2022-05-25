@@ -1,4 +1,5 @@
 #include <master_header.h>
+#include "set_config_path.c"
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
@@ -47,10 +48,10 @@ void init_defaults(void)    // 1.1.1 some changes
 }
 
 // FIXME: read config from a config file
-void configure(void)
+void configure(int argc, char** argv)
 {
     init_defaults();
-    config_parser();
+    config_parser(set_config_path(argc, argv));
     configure_can_nodes();
 }
 

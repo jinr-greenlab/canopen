@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     openlog("Demo", LOG_CONS, LOG_USER);
 
     syslog(LOG_INFO, "Starting can master");
-    if (start_can_master() != CAN_RETOK) {
+    if (start_can_master(argc, argv) != CAN_RETOK) {
         return CAN_ERRET_MAIN;
     }
 

@@ -54,11 +54,11 @@ static int16 can_init_controller(void)
 }
 
 
-int16 start_can_master(void)
+int16 start_can_master(int argc, char** argv)
 {
     int16 fnr;
     printf("Configuring ...\n");
-    configure();
+    configure(argc, argv);
 
     printf("CiInit ...\n");
     if (CiInit() < 0) {

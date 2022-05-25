@@ -22,7 +22,7 @@ def set_channel(channel, voltage):
             return
 
 @cli.command()
-@click.option("--channel", required=True, type=str, help="Serial number of board")
+@click.option("--channel", required=True, type=str, help="Number of channel (0-127)")
 def read_channel(channel):
     url ="http://" + IP + "/api/voltage/" + channel
     with requests.get(url) as resp:
