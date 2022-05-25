@@ -14,7 +14,11 @@ int main(int argc, char** argv)
     openlog("Demo", LOG_CONS, LOG_USER);
 
     syslog(LOG_INFO, "Starting can master");
-    if (start_can_master() != CAN_RETOK) {
+
+    char *path_config = clparser(argc, argv);
+
+
+    if (start_can_master(path_config) != CAN_RETOK) {
         return CAN_ERRET_MAIN;
     }
 

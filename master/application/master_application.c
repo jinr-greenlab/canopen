@@ -47,10 +47,10 @@ void init_defaults(void)    // 1.1.1 some changes
 }
 
 // FIXME: read config from a config file
-void configure(void)
+void configure(char *path_config)
 {
     init_defaults();
-    config_parser();
+    config_parser(path_config);
     configure_can_nodes();
 }
 

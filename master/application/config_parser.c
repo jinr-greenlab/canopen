@@ -42,7 +42,7 @@ static void consume_revision(yaml_event_t * e, long node) {
     can_node[node].maskdev |= MASK_DEV_REVISION;
 }
 
-int config_parser(void)
+int config_parser(char *path_config)
 {
     yaml_parser_t parser;
     yaml_event_t event;
@@ -52,7 +52,7 @@ int config_parser(void)
     enum state state = NO;
     enum state_node state_node = NO_NODE;
     yaml_parser_initialize(&parser);
-    FILE *input = fopen("config.yaml", "rb");
+    FILE *input = fopen(path_config, "rb");
     yaml_parser_set_input_file(&parser, input);
     while (!done) {
         if (!yaml_parser_parse(&parser, &event))
