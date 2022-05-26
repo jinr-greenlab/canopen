@@ -9,7 +9,7 @@ file(GLOB
 
 add_library(canmaster SHARED ${SRC})
 
-target_include_directories(canmaster PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(canmaster PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/../cargs/include)
 
 add_definitions(-DCAN_OS_LINUX)
-target_link_libraries(canmaster PUBLIC chai yaml)
+target_link_libraries(canmaster PUBLIC chai yaml cargs)
