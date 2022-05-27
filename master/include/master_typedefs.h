@@ -1,13 +1,7 @@
 // *** CANopen data type definitions ***
 
-#ifdef CAN_OS_LINUX
 typedef signed long long        int64;
 typedef unsigned long long      unsigned64;
-#endif
-#ifdef CAN_OS_WIN32
-typedef LONGLONG                        int64;
-typedef ULONGLONG                       unsigned64;
-#endif
 
 typedef    signed char            int8;
 typedef    unsigned char        unsigned8;
