@@ -28,22 +28,23 @@ char *clparser(int argc, char** argv)
   struct configuration config = {NULL};
 
   cag_option_prepare(&context, options, CAG_ARRAY_SIZE(options), argc, argv);
-  while (cag_option_fetch(&context))
-  {
+  while (cag_option_fetch(&context)) {
     identifier = cag_option_get(&context);
-    switch (identifier)
-    {
-    case 'c':
+    if (identifier == 'c') {
       value = cag_option_get_value(&context);
       config.path = value;
-      break;
-    case 'h':
+      return config.path;
+    }
+    else if (identifier == 'h'){
       printf("Usage: cargsdemo [OPTION]...\n");
       printf("Demonstrates the cargs library.\n\n");
       cag_option_print(options, CAG_ARRAY_SIZE(options), stdout);
       printf("\nNote that all formatting is done by cargs.\n");
-      return EXIT_SUCCESS;
+      exit(0);
+    }
+    else {
+      printf("KEY ERROR. Please use --help key.\n");
+      exit(0);
     }
   }
-  return config.path;
 }
