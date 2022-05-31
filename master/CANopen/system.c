@@ -22,14 +22,14 @@ void can_init_system_timer(void (*handler)(void))
 
     if (CAN_TIMERUSEC < CAN_TIMERUSEC_MIN) {
         set_error_field(CAN_EMCYREG_TIMERFAIL, 0);
-         return;
+        return;
     }
     sigact.sa_handler = (void *)handler;
     sigfillset(&sigact.sa_mask);    // Block all other signals during execution of the handler
     sigact.sa_flags = SA_NODEFER;  // The signal is NOT self-blocked
     if (sigaction(SIGALRM, &sigact, NULL) < 0) {
         set_error_field(CAN_EMCYREG_TIMERFAIL, 0);
-         return;
+        return;
     }
     val.it_value.tv_sec = 0;
     val.it_value.tv_usec = CAN_TIMERUSEC;

@@ -7,6 +7,7 @@ static int16 sem_canrecv, flag_canrecv;
 static int16 sem_cantrans, flag_cantrans, sem_overflow;
 static unsigned8 datalink_mode;
 
+// Sending data from the buffer
 void push_all_can_data(void)
 {
     unsigned16 cnt;
@@ -27,6 +28,7 @@ void push_all_can_data(void)
     } while (flag_cantrans != 0);
     flag_cantrans = 1;
 }
+
 
 int16 send_can_data(canframe *cf)        // 3.0.1 API changed
 {
@@ -69,6 +71,7 @@ int16 send_can_data(canframe *cf)        // 3.0.1 API changed
     return CAN_ERRET_COMM_SEND;
 }
 
+// Checking the received frame
 static void receive_can_data(canframe *cf)
 {
     canlink canid;
@@ -106,6 +109,7 @@ static void receive_can_data(canframe *cf)
     }
 }
 
+// The function of reading frames from the CAN network
 void can_read_handler(canev ev)
 {
     canframe cf;

@@ -2,17 +2,17 @@
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
-static void reset_can_network(void)
+static void reset_can_network(void) //Initialization of CAN devices
 {
-    cannode node;
+    cannode node;  //create Node ID
 
     can_sleep(500000);    // Node(s) may produce bootup after first startup - discard
     for (node = CAN_NODE_ID_MIN; node <= CAN_NODE_ID_MAX; node++) {
         can_node[node].nmt_state = CAN_NODE_STATE_DUMMY;
         can_node[node].ecpcnt = 1 + (1000 * CAN_RESET_NODE_MS / CAN_TIMERUSEC);
-        nmt_master_command(CAN_NMT_RESET_NODE, node);
+        nmt_master_command(CAN_NMT_RESET_NODE, node); //Creating a frame and sending it to a CAN device
         if (can_node[node].node_status == ON) {
-            node_event(node, EVENT_CLASS_NODE_STATE, EVENT_TYPE_INFO, EVENT_CODE_NODE_RESET, EVENT_INFO_DUMMY);
+            node_event(node, EVENT_CLASS_NODE_STATE, EVENT_TYPE_INFO, EVENT_CODE_NODE_RESET, EVENT_INFO_DUMMY); //Logging device information
         }
         can_sleep(10*CAN_SLEEP_ONE_MILLISEC);    // 10 Kbit/S match
     }
@@ -51,6 +51,7 @@ void configure(char *path_config)
 {
     init_defaults();
     config_parser(path_config);
+
     configure_can_nodes();
 }
 

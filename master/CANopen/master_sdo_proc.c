@@ -45,7 +45,6 @@ void parse_sdo(struct cansdo *sd, canbyte *data)
 
 static void assemble_sdo(struct cansdo *sd, canbyte *data)
 {
-
     *data = (sd->cs & CAN_MASK_SDO_CS) << 5;
     if (sd->cs == CAN_CCS_SDO_DOWNLOAD_INIT) {
         *data |= ((sd->b0.sg.ndata & 03) << 2) | ((sd->b0.sg.bit_1 & 01) << 1) | (sd->b0.sg.bit_0 & 01);

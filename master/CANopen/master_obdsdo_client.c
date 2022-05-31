@@ -5,10 +5,17 @@
 #define MASK_SDO_COBID_DYNAMIC        0x40000000    // SDO COBID value assigned statically or dynamically
 
 static struct objsdo {
+    // NMT command:
+    // 1-start CanOpen device
+    // 2-stop CanOpen device
+    // 128-preoperative state
+    // 129-Init device
+    // 130-communication subsystem initialization)
     unsigned32 cs;
-    unsigned32 sc;
+    unsigned32 sc; // server to client
 } sdo;
 
+// Checking the possibility of transmitting a frame
 static int16 find_sdo_client_entry(void)
 {
     if ((sdo.cs & CAN_MASK_COBID_INVALID) == 0 && (sdo.sc & CAN_MASK_COBID_INVALID) == 0) return CAN_RETOK;
