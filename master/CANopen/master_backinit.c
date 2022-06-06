@@ -10,10 +10,10 @@ static void canopen_timer(void)
 {
     sem_sys++;
     if (sem_sys == 0) {
-        control_sync();
-        can_client_control();
-        manage_master_ecp();
-        push_all_can_data();
+        control_sync(); // Sync management
+        can_client_control(); // Manage frame transaction
+        manage_master_ecp(); // Node heartbeat control
+        push_all_can_data(); // Sending data from the buffer
     }
     sem_sys--;
 }

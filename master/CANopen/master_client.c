@@ -209,4 +209,3 @@ void can_sdo_client_transfer(struct sdocltappl *ca)
 }
 
 #endif
-

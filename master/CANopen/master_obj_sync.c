@@ -31,6 +31,7 @@ static void reset_sync(void)
     ticktot = ttot;
 }
 
+// Create sync obj
 int16 find_sync_recv_canid(canlink *canid)
 {
     *canid = cobidsync & CAN_MASK_CANID;
@@ -76,8 +77,8 @@ int16 write_sync_object(canindex index, unsigned32 data)
 
 unsigned8 sync_window_expired(void)
 {
-    if (window == 0) return FALSE;
-    if (wincnt == 0) return TRUE;
+    if (window == 0) return FALSE; // Window sync open
+    if (wincnt == 0) return TRUE;  // Window sync close
     return FALSE;
 }
 
@@ -87,7 +88,7 @@ void sync_received(canframe *cf)
 
     if (syncover > CAN_SYNC_COUNTER_MIN) {
         if (cf->len != CAN_DATALEN_SYNC_COUNTER) {
-            master_emcy(CAN_EMCY_SYNCLEN);
+            master_emcy(CAN_EMCY_SYNCLEN); // logging
             return;
         }
         sc = cf->data[0];
@@ -101,10 +102,11 @@ void sync_received(canframe *cf)
     }
     tickcnt = ticktot;
     wincnt = 1 + window / CAN_TIMERUSEC;
-    process_sync_pdo(sc);
-    consume_sync(sc);
+    process_sync_pdo(sc); // Empty func ???
+    consume_sync(sc); // Empty func ???
 }
-    
+
+// Sync management
 void control_sync(void)
 {
     canframe cf;
@@ -129,7 +131,7 @@ void control_sync(void)
         sync_received(&cf);
     } else {
         tickcnt = ticktot;
-        no_sync_event();
+        no_sync_event(); // logging
     }
 }
 

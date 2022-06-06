@@ -2,6 +2,7 @@
 
 #if CHECK_VERSION_APPL(1, 1, 0)
 
+// Sending an NMT protocol frame to the CAN network
 void nmt_master_command(unsigned8 cs, cannode node)
 {
     canframe cf;
@@ -14,11 +15,12 @@ void nmt_master_command(unsigned8 cs, cannode node)
     send_can_data(&cf);
 }
 
+// Processing NMT frame
 void consume_nmt(canframe *cf)
 {
     cannode node;
     unsigned8 nst;
-    
+
     node = (cannode)(cf->id - CAN_CANID_NMT_ERROR_BASE);
     if (node < CAN_NODE_ID_MIN || node > CAN_NODE_ID_MAX) return;
     nst = cf->data[0] & 0x7F;
@@ -43,6 +45,7 @@ void consume_nmt(canframe *cf)
     can_node[node].nmt_state = nst;
 }
 
+// Node heartbeat control
 void manage_master_ecp(void)
 {
     cannode node;
