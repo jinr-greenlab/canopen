@@ -33,10 +33,15 @@ static int callback_get_voltage(const struct _u_request * request, struct _u_res
   int channel = atoi(u_map_get(request->map_url, "channel"));
   json_body = json_object();
   json_object_set_new(json_body, "channel", json_integer(channel));
-  json_object_set_new(json_body, "voltage", json_integer(state->voltage[channel]));
+  // int ADC_code = func read ADC code board's
+  int upper = 4200000;
+  int lower = 10000;
+  int ADC_code = (rand() % (upper - lower + 1)) + lower;
+  json_object_set_new(json_body, "ADC_code", json_integer(ADC_code));  //state->voltage[channel]
   ulfius_set_json_body_response(response, 200, json_body);
   syslog(LOG_ERR, "Get voltage response, \n%s", json_dumps(json_body, 0));
   json_decref(json_body);
+  printf("READ: Channel %d --- ADC code %d\n", channel, ADC_code);
   return U_CALLBACK_CONTINUE;
 }
 
@@ -46,7 +51,7 @@ static int callback_set_voltage(const struct _u_request * request, struct _u_res
   syslog(LOG_ERR, "Trying to set voltage on channel: %d", channel);
   json_t * json_body = ulfius_get_json_body_request(request, NULL);
   syslog(LOG_ERR, "Set voltage request body, \n%s", json_dumps(json_body, 0));
-  json_t * j_voltage = json_object_get(json_body, "voltage");
+  json_t * j_voltage = json_object_get(json_body, "DAC_code");
   if (j_voltage == NULL){
     ulfius_set_string_body_response(response, 400, "Wrong request body. Voltage must be set\n");
     json_decref(json_body);
@@ -65,6 +70,7 @@ static int callback_set_voltage(const struct _u_request * request, struct _u_res
   write(*(int *)user_data, &op, sizeof(set_voltage_op_t));
   ulfius_set_string_body_response(response, 200, "Ok\n");
   json_decref(json_body);
+  printf("SET: Channel %d --- Voltage %d\n", channel, voltage);
   return U_CALLBACK_CONTINUE;
 }
 

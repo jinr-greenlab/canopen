@@ -1,7 +1,6 @@
 import click
-import requests
-
-from cli.config import *
+from cli.config import IP
+from cli import api
 
 
 @click.group()
@@ -10,24 +9,14 @@ def cli():
 
 
 @cli.command()
+@click.option("--board", required=True, type=int, help="Serial number of board")
 @click.option("--channel", required=True, type=int, help="Number of channel (0-127)")
-@click.option("--voltage", required=True, type=str, help="Settable voltage")
-def set_channel(channel, voltage):
-    data = {"channel": channel, "voltage": voltage}
-    url ="http://" + IP + "/api/voltage/" + str(channel)
-    with requests.post(url, json = data) as resp:
-        message = f"status code: {resp.status_code}"
-        if resp.status_code != 200:
-            print(f"Error: {message}")
-            return
+@click.option("--voltage", required=True, type=float, help="Settable voltage")
+def set_channel(board, channel, voltage):
+    api.set_channel(board, channel, voltage)
 
 @cli.command()
-@click.option("--channel", required=True, type=str, help="Serial number of board")
-def read_channel(channel):
-    url ="http://" + IP + "/api/voltage/" + channel
-    with requests.get(url) as resp:
-        print(resp.json())
-        message = f"status code: {resp.status_code}"
-        if resp.status_code != 200:
-            print(f"Error: {message}")
-            return
+@click.option("--board", required=True, type=int, help="Serial number of board")
+@click.option("--channel", required=True, type=int, help="Serial number of board")
+def read_channel(board, channel):
+    api.read_channel(board, channel)
