@@ -12,10 +12,13 @@ def parse_yaml(path_to_yaml):
             data = yaml.safe_load(stream)
             return data
         except:
-            print("yaml file not found! Please, check the path.")
+            print("ERROR: yaml file not found! Please, check the path.")
             sys.exit()
 
 def channel_converter(channel):
+    if channel<0 or channel>127:
+        print("ERROR: Operating channels 0-127!")
+        sys.exit()
     if 0<=channel<=31:
         mez = 0
         mezch = channel
@@ -39,7 +42,6 @@ def find_volt_to_bit(board_sn, channel, voltage):
         bit = convert_voltage.volt_to_bit(file_name, voltage)
         return bit
     except:
-        print("ERROR: Operating voltage 1-120V")
         sys.exit()
 
 def find_ADC_to_volt_channel(board_sn, channel, ADC_code):
@@ -50,25 +52,35 @@ def find_ADC_to_volt_channel(board_sn, channel, ADC_code):
     voltage = convert_voltage.ADC_code_to_volt(file_name, ADC_code)
     return voltage
 
-def set_channel(board, channel, voltage):
-    DAC_code = find_volt_to_bit(board, channel, voltage)
-    data = {"board": board, "channel": channel, "DAC_code": str(DAC_code)}
-    url ="http://" + IP + "/api/voltage/" + str(channel)
+def set_channel(board_sn, channel, voltage):
+    try:
+        DAC_code = find_volt_to_bit(board_sn, channel, voltage)
+    except:
+        print("ERROR: Calibration file not found!")
+        sys.exit()
+    if voltage<1 or voltage>120:
+        print("ERROR: Operating voltage 1-120V!")
+        sys.exit()
+    data = {"board_sn": board_sn, "channel": channel, "DAC_code": str(DAC_code)}
+    url ="http://" + IP + "/api/voltage/" + str(board_sn) + "/" + str(channel)
     with requests.post(url, json = data) as resp:
         message = f"status code: {resp.status_code}"
         if resp.status_code != 200:
-            print(f"Error: {message}")
+            print(f"ERROR: {message}")
             return
 
-def read_channel(board, channel):
-    url ="http://" + IP + "/api/voltage/" + str(channel)
+def read_channel(board_sn, channel):
+    url ="http://" + IP + "/api/voltage/" + str(board_sn) + "/" + str(channel)
     with requests.get(url) as resp:
         ADC_code = resp.json()["ADC_code"]
         message = f"status code: {resp.status_code}"
         if resp.status_code != 200:
-            print(f"Error: {message}")
+            print(f"ERROR: {message}")
             return
-    voltage = find_ADC_to_volt_channel(board, channel, ADC_code)
-    print(f"ADC code: {ADC_code}   Voltage: {voltage}")
+    try:
+        voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
+    except:
+        print("ERROR: Calibration file not found!")
+        sys.exit()
+    print(f"ADC code: {ADC_code}   Voltage: {voltage} V")
     return voltage
-
