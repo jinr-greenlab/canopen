@@ -1,4 +1,5 @@
 #include <master_header.h>
+#include <syslog.h>
 
 #if CHECK_VERSION_APPL(1, 1, 1)
 
@@ -13,6 +14,7 @@ void no_sync_event(void)
 
 void consume_controller_error(canev ev)
 {
+    syslog(LOG_INFO, "consume_controller_error: %d", ev);
     if (ev == CIEV_BOFF) {
         master_event(EVENT_CLASS_EMCY, EVENT_TYPE_FATAL, CAN_EMCYREG_BOFF, EVENT_INFO_DUMMY);
     } else if (ev == CIEV_HOVR) {
@@ -48,6 +50,7 @@ void consume_emcy(canframe *cf)        // 1.1.1 some changes
 
 void can_cache_overflow(void)
 {
+    syslog(LOG_INFO, "can_cache_overflow");
     master_emcy(CAN_EMCYREG_CACHE);
 }
 

@@ -104,6 +104,7 @@ static void receive_can_data(canframe *cf)
         if (cf->len != CAN_DATALEN_SDO) return;        // 2.2.2
         if (find_sdo_client_recv_canid(&canid) == CAN_RETOK) {
             if (cf->id == canid) can_client_sdo(cf);
+
         }
         return;
     }

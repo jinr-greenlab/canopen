@@ -5,14 +5,13 @@
 
 static int16 sem_sys=-1024;
 
-// FIXME: Figure out what does this function do.
 static void canopen_timer(void)
 {
     sem_sys++;
     if (sem_sys == 0) {
-        control_sync(); // Sync management
+        // control_sync(); // Sync management
         can_client_control(); // Manage frame transaction
-        manage_master_ecp(); // Node heartbeat control
+        // manage_master_ecp(); // Node heartbeat control
         push_all_can_data(); // Sending data from the buffer
     }
     sem_sys--;
@@ -76,10 +75,6 @@ int16 start_can_master(char *path_config)
     can_init_sdo_client();
     printf("can_init_io\n");
     can_init_io();
-    printf("can_init_pdo\n");
-    can_init_pdo();
-    printf("can_init_sync\n");
-    can_init_sync();
     printf("can_init_system_timer\n");
     can_init_system_timer(canopen_timer);
     printf("can_init_controller\n");

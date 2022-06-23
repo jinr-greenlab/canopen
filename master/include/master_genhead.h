@@ -9,21 +9,10 @@
 #include <__logger_defines.h>
 #include <master_typedefs.h>
 
-#ifdef CAN_OS_LINUX
 #include <signal.h>
 #include <time.h>
 #include <errno.h>
 #include <sys/time.h>
-#endif
-
-#define _WIN32_WINNT 0x0601
-
-#ifdef CAN_OS_WIN32
-#include <windows.h>
-#ifdef _MT
-#include <process.h>
-#endif
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
