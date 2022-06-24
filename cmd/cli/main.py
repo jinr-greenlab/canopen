@@ -1,5 +1,4 @@
 import click
-from cli.config import IP
 from cli import api
 
 
