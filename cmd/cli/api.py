@@ -1,5 +1,4 @@
 import requests
-import sys
 import yaml
 
 from cli import convert_voltage
