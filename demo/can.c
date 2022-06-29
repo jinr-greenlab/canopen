@@ -30,7 +30,7 @@ void * start_master(void * _config) {
         if (rsize == sizeof(req_t)){
             if (req.type == Set) {
                 syslog(LOG_INFO, "Set voltage request received: channel: %d voltage: %d", req.channel, req.voltage_dac);
-                sdo_status = write_device_object(DEVICE_ID, CANOPEN_DAC_W, req.channel, &req.voltage_dac, 2);
+                sdo_status = write_device_object(DEVICE_ID, CANOPEN_DAC_W, req.channel, (canbyte *)&req.voltage_dac, 2);
                 if (sdo_status != CAN_TRANSTATE_OK) {
                     syslog(LOG_ERR, "Error while writing canopen object: idx: %d sub: %d", CANOPEN_DAC_W, req.channel);
                 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <syslog.h>
 #include <master_header.h>
 
 #if CHECK_VERSION_CANLIB(3, 0, 4)
@@ -56,36 +57,41 @@ static int16 can_init_controller(void)
 int16 start_can_master(char *path_config)
 {
     int16 fnr;
-    printf("Configuring ...\n");
+    syslog(LOG_INFO, "Apply configuration ...");
     configure(path_config);
 
-    printf("CiInit ...\n");
+    syslog(LOG_INFO, "CiInit ...");
     if (CiInit() < 0) {
         master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_INIT, EVENT_INFO_DUMMY);
         return CAN_ERRET_CI_INIT;
     }
-    printf("CiOpen ...\n");
+    syslog(LOG_INFO, "CiOpen ...");
     if (CiOpen(can_network, 0) < 0) {
         master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, CAN_ERRET_CI_OPEN, EVENT_INFO_DUMMY);
         return CAN_ERRET_CI_OPEN;
     }
-    printf("can_init_client\n");
+    syslog(LOG_INFO, "can_init_client");
     can_init_client();
-    printf("can_init_sdo_client\n");
+    syslog(LOG_INFO, "can_init_sdo_client");
     can_init_sdo_client();
-    printf("can_init_io\n");
+    syslog(LOG_INFO, "can_init_io");
     can_init_io();
-    printf("can_init_system_timer\n");
+    syslog(LOG_INFO, "can_init_system_timer");
     can_init_system_timer(canopen_timer);
-    printf("can_init_controller\n");
+    syslog(LOG_INFO, "can_init_controller");
     fnr = can_init_controller();
     if (fnr != CAN_RETOK) {
         master_event(EVENT_CLASS_MASTER_CHAI, EVENT_TYPE_FATAL, fnr, EVENT_INFO_DUMMY);
         return fnr;
     }
     sem_sys = -1;
-    printf("start_can_network\n");
+
+    syslog(LOG_INFO, "configure_can_nodes");
+    configure_can_nodes();
+
+    syslog(LOG_INFO, "start_can_network");
     start_can_network();
+
     return CAN_RETOK;
 }
 
