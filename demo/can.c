@@ -20,6 +20,7 @@ void * start_master(void * _config) {
     canbyte * voltage_adc = malloc(sizeof(canbyte) * 4);
     canbyte * ref_voltage = malloc(sizeof(canbyte) * 4);
     canbyte * ext_voltage = malloc(sizeof(canbyte) * 4);
+    canbyte * mez_temp = malloc(sizeof(canbyte) * 4);
     int16 sdo_status;
 
     while(TRUE) {
@@ -63,6 +64,17 @@ void * start_master(void * _config) {
                 }
                 resp.subindex = req.subindex;
                 resp.value = *((unsigned32 *)ext_voltage);
+                write(config->resp_fd, &resp, sizeof(resp_t));
+            }
+            else if (req.type == GetMezTemp) {
+                syslog(LOG_INFO, "Get mez.temperature request received: node: %d --- subindex: %d\n", req.node, req.subindex);
+                sdo_status = read_device_object(req.node, CANOPEN_TEMP_R, req.subindex, mez_temp, sizeof(canbyte) * 4);
+                if (sdo_status != CAN_TRANSTATE_OK) {
+                    syslog(LOG_ERR, "Error while reading canopen object: idx: %d sub: %d\n", CANOPEN_TEMP_R, req.subindex);
+                    continue;
+                }
+                resp.subindex = req.subindex;
+                resp.value = *((unsigned32 *)mez_temp);
                 write(config->resp_fd, &resp, sizeof(resp_t));
             }
         }

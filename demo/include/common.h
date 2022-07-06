@@ -7,12 +7,14 @@
 #define CANOPEN_ADC_R 0x2402    // Read voltage from ADC (ADC code): subindex (channels) 1-128
 #define CANOPEN_REF_R 0x6402    // Reference voltage: subindex = 1
 #define CANOPEN_EXT_R 0x6402    // High voltage from power source: subindex = 2
+#define CANOPEN_TEMP_R 0x6402   // Mezzanine temp: subindex (mez numbers) 3-6
 
 typedef enum req_type_t {
     SetVoltage,
     GetVoltage,
     GetRefVoltage,
-    GetExtVoltage
+    GetExtVoltage,
+    GetMezTemp
 } req_type_t;
 
 typedef struct req_t {

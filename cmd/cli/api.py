@@ -198,3 +198,25 @@ def hv_supply_voltage(board_sn):
     print(f"HV power supply voltage: {ext_voltage} V")
     return ext_voltage
 
+def mez_temp(board_sn):
+    errors.error_control(check_boards(board_sn))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    mez_nums = range(1,5)
+    mez_temps = {}
+    for mez_num in mez_nums:
+        url ="http://" + IP + "/api/mez_temp/" + str(node) + "/" + str(mez_num)
+        with requests.get(url) as resp:
+            response = resp.json()
+            if "error" in response:
+                errors.error_control(-7)
+            message = f"status code: {resp.status_code}"
+            if resp.status_code != 200:
+                print(f"ERROR: {message}")
+                return 0
+        mez_temp = response["mez_temp"]  # ADC code
+        mez_temps["mez_"+str(mez_num)] = mez_temp
+    for key in mez_temps.keys():
+        print(f"{key}: {mez_temps[key]}")
+    return mez_temps
+
