@@ -181,3 +181,20 @@ def ref_voltage(board_sn):
     print(f"Ref. voltage: {ref_voltage} V")
     return ref_voltage
 
+def hv_supply_voltage(board_sn):
+    errors.error_control(check_boards(board_sn))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    url ="http://" + IP + "/api/ext_voltage/" + str(node)
+    with requests.get(url) as resp:
+        response = resp.json()
+        if "error" in response:
+            errors.error_control(-7)
+        message = f"status code: {resp.status_code}"
+        if resp.status_code != 200:
+            print(f"ERROR: {message}")
+            return 0
+    ext_voltage = response["ext_voltage"]/1000  #mV --> V
+    print(f"HV power supply voltage: {ext_voltage} V")
+    return ext_voltage
+
