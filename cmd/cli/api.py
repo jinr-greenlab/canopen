@@ -101,6 +101,24 @@ def set_channel(board_sn, channel, voltage):
             print(f"ERROR: {message}")
             return 0
 
+def set_channels(board_sn, voltage):
+    errors.error_control(check_boards(board_sn))
+    errors.error_control(check_voltage(voltage))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    channels = range(1,129)
+    for channel in channels:
+        DAC_code = find_volt_to_bit(board_sn, channel, voltage)
+        if DAC_code<0:
+            print(f"Problem: {channel}")
+        data = {"node": node, "channel": channel, "DAC_code": str(DAC_code)}
+        url ="http://" + IP + "/api/voltage/" + str(node) + "/" + str(channel)
+        with requests.post(url, json = data) as resp:
+            message = f"status code: {resp.status_code}"
+            if resp.status_code != 200:
+                print(f"ERROR: {message}")
+                return 0
+
 def read_channel(board_sn, channel):
     errors.error_control(check_boards(board_sn))
     errors.error_control(channel_converter(channel))
@@ -120,4 +138,29 @@ def read_channel(board_sn, channel):
     errors.error_control(voltage)
     print(f"ADC code: {ADC_code}   Voltage: {round(voltage,4)} V")
     return {"ADC_code": ADC_code, "voltage": voltage}
+
+def read_channels(board_sn):
+    errors.error_control(check_boards(board_sn))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    channels = range(1,129)
+    voltages = {}
+    print("Waiting...")
+    for channel in channels:
+        url ="http://" + IP + "/api/voltage/" + str(node) + "/" + str(channel)
+        with requests.get(url) as resp:
+            response = resp.json()
+            if "error" in response:
+                errors.error_control(-7)
+            message = f"status code: {resp.status_code}"
+            if resp.status_code != 200:
+                print(f"ERROR: {message}")
+                return 0
+        ADC_code = response["ADC_code"]
+        voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
+        voltages[channel] = {"ADC_code": ADC_code, "voltage": round(voltage,4)}
+    print(f"Board_SN: {board_sn}")
+    for item in voltages.keys():
+        print(f"channel: {item:3}   ADC_code: {voltages[item]['ADC_code']:7}   Voltage: {voltages[item]['voltage']:7} V")
+    return voltages
 
