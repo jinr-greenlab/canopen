@@ -220,3 +220,13 @@ def mez_temp(board_sn):
         print(f"{key}: {mez_temps[key]}")
     return mez_temps
 
+def reset(board_sn):
+    errors.error_control(check_boards(board_sn))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    url ="http://" + IP + "/api/reset/" + str(node)
+    with requests.get(url) as resp:
+        response = resp.json()
+        if "error" in response:
+            print(f"Board: {board_sn} reseted!")
+            return 0

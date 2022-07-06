@@ -45,3 +45,8 @@ def hv_supply_voltage(board):
 @click.option("--board", required=True, type=int, help="Serial number of board")
 def mez_temp(board):
     api.mez_temp(board)
+
+@cli.command()
+@click.option("--board", required=True, type=int, help="Serial number of board")
+def reset(board):
+    api.reset(board)

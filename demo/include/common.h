@@ -14,7 +14,8 @@ typedef enum req_type_t {
     GetVoltage,
     GetRefVoltage,
     GetExtVoltage,
-    GetMezTemp
+    GetMezTemp,
+    ResetNode
 } req_type_t;
 
 typedef struct req_t {

@@ -148,6 +148,31 @@ static int callback_get_ext_voltage(const struct _u_request * request, struct _u
     return U_CALLBACK_CONTINUE;
 }
 
+// Reset board
+static int callback_reset_node(const struct _u_request * request, struct _u_response * response, void * _config) {
+    http_config_t * config = (http_config_t *) _config;
+    json_t * json_body = NULL;
+    int rsize;
+    time_t req_timestamp;
+    time_t current_timestamp;
+    req_t req;
+    resp_t resp;
+    // get channel number from the url /api/ext_voltage/:node
+    int node = atoi(u_map_get(request->map_url, "node"));
+    syslog(LOG_INFO, "Reset node: %d", node);
+    req.type = ResetNode;
+    req.subindex = NULL;
+    req.node = node;
+    write(config->req_fd, &req, sizeof(req_t));
+    json_body = json_object();
+    resp.node = req.node;
+    json_object_set_new(json_body, "node", json_integer(resp.node));
+    ulfius_set_json_body_response(response, 200, json_body);
+    syslog(LOG_INFO, "Get Reset node, %s", json_dumps(json_body, 0));
+    json_decref(json_body);
+    return U_CALLBACK_CONTINUE;
+}
+
 // get the mezzanine temperature and respond to a user
 static int callback_mez_temp(const struct _u_request * request, struct _u_response * response, void * _config) {
     http_config_t * config = (http_config_t *) _config;
@@ -258,6 +283,7 @@ void * start_http_server(void * _config) {
     ulfius_add_endpoint_by_val(&instance, "GET", "/api", "/ref_voltage/:node", 0, &callback_get_ref_voltage, config);
     ulfius_add_endpoint_by_val(&instance, "GET", "/api", "/ext_voltage/:node", 0, &callback_get_ext_voltage, config);
     ulfius_add_endpoint_by_val(&instance, "GET", "/api", "/mez_temp/:node/:mez_num", 0, &callback_mez_temp, config);
+    ulfius_add_endpoint_by_val(&instance, "GET", "/api", "/reset/:node", 0, &callback_reset_node, config);
 
     if (ulfius_start_framework(&instance) == U_OK) {
         getchar();

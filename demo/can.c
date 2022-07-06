@@ -77,6 +77,10 @@ void * start_master(void * _config) {
                 resp.value = *((unsigned32 *)mez_temp);
                 write(config->resp_fd, &resp, sizeof(resp_t));
             }
+            else if (req.type == ResetNode) {
+                syslog(LOG_INFO, "Reset node: %d\n", req.node);
+                reset_can_node(req.node);
+            }
         }
     }
 
