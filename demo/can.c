@@ -18,6 +18,7 @@ void * start_master(void * _config) {
     }
 
     canbyte * voltage_adc = malloc(sizeof(canbyte) * 4);
+    canbyte * ref_voltage = malloc(sizeof(canbyte) * 4);
     int16 sdo_status;
 
     while(TRUE) {
@@ -39,6 +40,17 @@ void * start_master(void * _config) {
                 }
                 resp.subindex = req.subindex;
                 resp.value = *((unsigned32 *)voltage_adc);
+                write(config->resp_fd, &resp, sizeof(resp_t));
+            }
+            else if (req.type == GetRefVoltage) {
+                syslog(LOG_INFO, "Get ref voltage request received: node: %d --- channel: %d\n", req.node, req.subindex);
+                sdo_status = read_device_object(req.node, CANOPEN_REF_R, req.subindex, ref_voltage, sizeof(canbyte) * 4);
+                if (sdo_status != CAN_TRANSTATE_OK) {
+                    syslog(LOG_ERR, "Error while reading canopen object: idx: %d sub: %d\n", CANOPEN_REF_R, req.subindex);
+                    continue;
+                }
+                resp.subindex = req.subindex;
+                resp.value = *((unsigned32 *)ref_voltage);
                 write(config->resp_fd, &resp, sizeof(resp_t));
             }
         }

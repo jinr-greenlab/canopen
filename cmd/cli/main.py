@@ -30,3 +30,8 @@ def read_channel(board, channel):
 @click.option("--board", required=True, type=int, help="Serial number of board")
 def read_channels(board):
     api.read_channels(board)
+
+@cli.command()
+@click.option("--board", required=True, type=int, help="Serial number of board")
+def ref_voltage(board):
+    api.ref_voltage(board)
