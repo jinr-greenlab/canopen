@@ -2,7 +2,7 @@ import sys
 
 ERRORS = {
         -1:  {"name": "YAML_ERROR", "description": "ERROR: config.yaml file not found! Check the path!"},
-        -2:  {"name": "CHANNEL_ERROR", "description": "ERROR: Operating channels 0-127!"},
+        -2:  {"name": "CHANNEL_ERROR", "description": "ERROR: Operating channels 1-128!"},
         -3:  {"name": "FIND_VOLTAGE", "description": "ERROR: Convert voltage to DAC code problem! Please check calib files!"},
         -4:  {"name": "FIND_VOLTAGE", "description": "ERROR: Convert voltage to ADC code problem! Please check calib files!"},
         -5:  {"name": "VOLTAGE_RANGE", "description": "ERROR: Operating voltage 1-120V!"},

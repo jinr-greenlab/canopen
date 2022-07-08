@@ -12,7 +12,7 @@
 
 #define CAN_TIMERUSEC                10000    // Background timer period in microseconds (10 milliseconds).
 
-#define CAN_TIMEOUT_RETRIEVE        500000    // SDO client BASIC transaction data retrieve DEFAULT timeout - microseconds
+#define CAN_TIMEOUT_RETRIEVE        1000000    // SDO client BASIC transaction data retrieve DEFAULT timeout - microseconds
 #define CAN_TIMEOUT_READ            200000    // SDO client BASIC transaction data read timeout - microseconds
                                             // NO nested client transactions
 
@@ -24,3 +24,6 @@
 
 // FIXME: This is not needed. Left it here because it is used in logging.
 #define MASTER_CONFIG_FILE_VERSION    0x00030001
+
+#define CAN_APPLICATION_MODE MASTER
+#define CAN_OBJECT_EMCY FALSE

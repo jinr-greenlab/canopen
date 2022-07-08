@@ -1,6 +1,7 @@
 #include <master_header.h>
 #include <string.h>
-#include <yaml.h>   
+#include <yaml.h>
+#include <syslog.h>
 
 enum state {
     NO,
@@ -17,7 +18,10 @@ enum state_node {
     REVISION
 };
 static long consume_node_id(yaml_event_t * e) {
-    return strtol((char *)e->data.scalar.value, NULL, 16);
+    long node_id = strtol((char *)e->data.scalar.value, NULL, 10);
+    can_node[node_id].node_status = ON;
+    can_node[node_id].nmt_state = CAN_NODE_STATE_INITIALISING;
+    return node_id;
 }
 static void consume_can_network(yaml_event_t * e) {
     can_network = strtol((char *)e->data.scalar.value, NULL, 16);

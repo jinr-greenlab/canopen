@@ -6,6 +6,19 @@ from cli import errors
 from cli.config import IP, PATH_YAML
 
 
+ATTEMPTS = 5 #Attemts counter for read channel if request error
+NODE_ID_MAX = 128
+
+def convert_node_to_board_sn(node):
+    if node<NODE_ID_MAX:
+        data = parse_yaml(PATH_YAML)
+        errors.error_control(data)
+        for fnode in data["Nodes"]:
+            if node == fnode["NodeID"]:
+                return fnode["BoardSN"]
+        return -6
+    return node
+
 def parse_yaml(path_to_yaml):
     try:
         with open(path_to_yaml, "r") as stream:
@@ -15,6 +28,7 @@ def parse_yaml(path_to_yaml):
         return -1
 
 def check_boards(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     data = parse_yaml(PATH_YAML)
     errors.error_control(data)
     available_boards = []
@@ -86,6 +100,7 @@ def find_ADC_to_volt_channel(board_sn, channel, ADC_code):
         return -4
 
 def set_channel(board_sn, channel, voltage):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     errors.error_control(channel_converter(channel))
     errors.error_control(check_voltage(voltage))
@@ -102,6 +117,7 @@ def set_channel(board_sn, channel, voltage):
             return 0
 
 def set_channels(board_sn, voltage):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     errors.error_control(check_voltage(voltage))
     node = get_node(board_sn)
@@ -120,6 +136,7 @@ def set_channels(board_sn, voltage):
                 return 0
 
 def read_channel(board_sn, channel):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     errors.error_control(channel_converter(channel))
     node = get_node(board_sn)
@@ -136,35 +153,33 @@ def read_channel(board_sn, channel):
     ADC_code = response["ADC_code"]
     voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
     errors.error_control(voltage)
-    print(f"ADC code: {ADC_code}   Voltage: {round(voltage,4)} V")
-    return {"ADC_code": ADC_code, "voltage": voltage}
+    return {"ADC_code": ADC_code, "voltage": round(voltage,4)}
 
 def read_channels(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     node = get_node(board_sn)
     errors.error_control(node)
     channels = range(1,129)
-    voltages = {}
-    print("Waiting...")
     for channel in channels:
         url ="http://" + IP + "/api/voltage/" + str(node) + "/" + str(channel)
-        with requests.get(url) as resp:
-            response = resp.json()
-            if "error" in response:
-                errors.error_control(-7)
-            message = f"status code: {resp.status_code}"
-            if resp.status_code != 200:
-                print(f"ERROR: {message}")
-                return 0
-        ADC_code = response["ADC_code"]
-        voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
-        voltages[channel] = {"ADC_code": ADC_code, "voltage": round(voltage,4)}
-    print(f"Board_SN: {board_sn}")
-    for item in voltages.keys():
-        print(f"channel: {item:3}   ADC_code: {voltages[item]['ADC_code']:7}   Voltage: {voltages[item]['voltage']:7} V")
-    return voltages
+        for attempt in range(ATTEMPTS):
+            with requests.get(url) as resp:
+                response = resp.json()
+                if "error" in response:
+                    continue
+                message = f"status code: {resp.status_code}"
+                if resp.status_code != 200:
+                    print(f"ERROR: {message}")
+                    return 0
+            ADC_code = response["ADC_code"]
+            voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
+            break
+        print(f"channel: {channel:3}   ADC code: {ADC_code:7}   Voltage: {round(voltage,4):7}")
+    return 0
 
 def ref_voltage(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     node = get_node(board_sn)
     errors.error_control(node)
@@ -178,10 +193,10 @@ def ref_voltage(board_sn):
             print(f"ERROR: {message}")
             return 0
     ref_voltage = response["ref_voltage"]/1000  #mV --> V
-    print(f"Ref. voltage: {ref_voltage} V")
     return ref_voltage
 
 def hv_supply_voltage(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     node = get_node(board_sn)
     errors.error_control(node)
@@ -195,10 +210,10 @@ def hv_supply_voltage(board_sn):
             print(f"ERROR: {message}")
             return 0
     ext_voltage = response["ext_voltage"]/1000  #mV --> V
-    print(f"HV power supply voltage: {ext_voltage} V")
     return ext_voltage
 
 def mez_temp(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     node = get_node(board_sn)
     errors.error_control(node)
@@ -215,12 +230,11 @@ def mez_temp(board_sn):
                 print(f"ERROR: {message}")
                 return 0
         mez_temp = response["mez_temp"]  # ADC code
-        mez_temps["mez_"+str(mez_num)] = mez_temp
-    for key in mez_temps.keys():
-        print(f"{key}: {mez_temps[key]}")
+        mez_temps["mez "+str(mez_num)] = mez_temp
     return mez_temps
 
 def reset(board_sn):
+    board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
     node = get_node(board_sn)
     errors.error_control(node)
@@ -230,3 +244,18 @@ def reset(board_sn):
         if "error" in response:
             print(f"Board: {board_sn} reseted!")
             return 0
+
+def print_ref_voltage(board_sn):
+    print(f"Ref. voltage: {ref_voltage(board_sn)} V")
+
+def print_hv_supply_voltage(board_sn):
+    print(f"HV power supply voltage: {hv_supply_voltage(board_sn)} V")
+
+def print_mez_temp(board_sn):
+    mez_temps = mez_temp(board_sn)
+    for mez in mez_temps.keys():
+        print(f"{mez}: {mez_temps[mez]}")
+
+def print_read_channel(board_sn, channel):
+    res = read_channel(board_sn, channel)
+    print(f"ADC code: {res['ADC_code']}   Voltage: {res['voltage']}")

@@ -5,7 +5,6 @@
 #define MAJ_VERS_CANLIB        3    // Major CANopen library software version
 #define MIN_VERS_CANLIB        0    // Minor CANopen library software version
 #define RELEASE_CANLIB        0    // The CANopen library software release
-#define CAN_OS_LINUX
 
 #ifndef FALSE
 #define FALSE            0
@@ -84,7 +83,7 @@
 // *** Various time-related constants ***
 
 #define CAN_SLEEP_ONE_MILLISEC        1000        // One milisecond sleep interval in microseconds
-#define CAN_SLEEP_READ                1000        // SDO client BASIC transaction sleep interval in microseconds
+#define CAN_SLEEP_READ                10000        // SDO client BASIC transaction sleep interval in microseconds
 
 // *** CAN_WRITECACHE_... -  CANopen output cache related ***
 

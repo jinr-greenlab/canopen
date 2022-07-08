@@ -2,7 +2,6 @@
 
 #define CAN_TIMERUSEC_MIN        100    // Minimum background timer period in microseconds.
 
-#ifdef CAN_OS_LINUX
 void can_sleep(int32 microseconds)
 {
     struct timespec nsl;
@@ -55,5 +54,3 @@ void can_cancel_system_timer(void)
     val.it_interval.tv_usec = 0;
     setitimer(ITIMER_REAL, &val, NULL);
 }
-
-#endif

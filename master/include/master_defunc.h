@@ -107,4 +107,7 @@ void log_event(struct eventlog *ev);
 // ..application/clparser.c
 char *clparser(int argc, char** argv);
 
+// ..CANopen/master_obj_errors.c
+void set_error_field(unsigned16 errorcode, unsigned16 addinf);
+
 #endif

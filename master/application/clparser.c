@@ -4,10 +4,10 @@
 
 static struct cag_option options[] = {
   {.identifier = 'c',
-    .access_letters = NULL,
+    .access_letters = "c",
     .access_name = "config-file",
     .value_name = "path/to/config.yaml",
-    .description = "Path to coniguration file"},
+    .description = "Path to configuration file"},
 
   {.identifier = 'h',
     .access_letters = "h",
@@ -22,6 +22,12 @@ struct configuration
 
 char *clparser(int argc, char** argv)
 {
+  if (argc == 1){
+    printf("Usage: demo [OPTION]...\n");
+    cag_option_print(options, CAG_ARRAY_SIZE(options), stdout);
+    exit(0);
+  }
+
   char identifier;
   const char *value;
   cag_option_context context;
@@ -36,14 +42,14 @@ char *clparser(int argc, char** argv)
       return config.path;
     }
     else if (identifier == 'h'){
-      printf("Usage: cargsdemo [OPTION]...\n");
-      printf("Demonstrates the cargs library.\n\n");
+      printf("Usage: demo [OPTION]...\n");
       cag_option_print(options, CAG_ARRAY_SIZE(options), stdout);
-      printf("\nNote that all formatting is done by cargs.\n");
       exit(0);
     }
     else {
-      printf("KEY ERROR. Please use --help key.\n");
+      printf("KEY ERROR!\n");
+      printf("Usage: demo [OPTION]...\n");
+      cag_option_print(options, CAG_ARRAY_SIZE(options), stdout);
       exit(0);
     }
   }
