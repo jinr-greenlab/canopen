@@ -50,9 +50,3 @@ def mez_temp(board):
 @click.option("--board", required=True, type=int, help="Serial number of board")
 def reset(board):
     api.reset(board)
-
-# @cli.command()
-# @click.option("--board", required=True, type=int, help="Serial number of board")
-# def test(board):
-#     print(api.convert_node_to_board_sn(board))
-

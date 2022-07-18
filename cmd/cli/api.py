@@ -1,12 +1,13 @@
 import requests
 import yaml
+from time import sleep
 
 from cli import convert_voltage
 from cli import errors
 from cli.config import IP, PATH_YAML
 
 
-ATTEMPTS = 5 #Attemts counter for read channel if request error
+ATTEMPTS = 5
 NODE_ID_MAX = 128
 
 def convert_node_to_board_sn(node):
@@ -45,16 +46,16 @@ def channel_converter(channel):
         return -2
     elif 1<=channel<=32:
         mez = 0
-        mezch = channel - 1  # !!!!!
+        mezch = channel - 1
     elif 33<=channel<=64:
         mez = 1
-        mezch = channel - 32 -1  # !!!!!
+        mezch = channel - 32 -1
     elif 65<=channel<=96:
         mez = 2
-        mezch = channel - 64 -1  # !!!!!
+        mezch = channel - 64 -1
     elif 97<=channel<=128:
         mez = 3
-        mezch = channel - 96 -1  # !!!!!
+        mezch = channel - 96 -1
     return {"mez": mez, "mezch": mezch}
 
 def check_voltage(voltage):
@@ -116,6 +117,21 @@ def set_channel(board_sn, channel, voltage):
             print(f"ERROR: {message}")
             return 0
 
+def set_channel_bit(board_sn, channel, DAC_code):
+    board_sn = convert_node_to_board_sn(board_sn)
+    errors.error_control(check_boards(board_sn))
+    errors.error_control(channel_converter(channel))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    data = {"node": node, "channel": channel, "DAC_code": str(DAC_code)}
+    url ="http://" + IP + "/api/voltage/" + str(node) + "/" + str(channel)
+    with requests.post(url, json = data) as resp:
+        message = f"status code: {resp.status_code}"
+        if resp.status_code != 200:
+            print(f"ERROR: {message}")
+            return 0
+
+
 def set_channels(board_sn, voltage):
     board_sn = convert_node_to_board_sn(board_sn)
     errors.error_control(check_boards(board_sn))
@@ -123,6 +139,7 @@ def set_channels(board_sn, voltage):
     node = get_node(board_sn)
     errors.error_control(node)
     channels = range(1,129)
+    print("Wait...")
     for channel in channels:
         DAC_code = find_volt_to_bit(board_sn, channel, voltage)
         if DAC_code<0:
@@ -134,6 +151,8 @@ def set_channels(board_sn, voltage):
             if resp.status_code != 200:
                 print(f"ERROR: {message}")
                 return 0
+    sleep(15)
+    print("Done!")
 
 def read_channel(board_sn, channel):
     board_sn = convert_node_to_board_sn(board_sn)
@@ -153,7 +172,25 @@ def read_channel(board_sn, channel):
     ADC_code = response["ADC_code"]
     voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
     errors.error_control(voltage)
-    return {"ADC_code": ADC_code, "voltage": round(voltage,4)}
+    return round(voltage,3)
+
+def read_channel_adc_code(board_sn, channel):
+    board_sn = convert_node_to_board_sn(board_sn)
+    errors.error_control(check_boards(board_sn))
+    errors.error_control(channel_converter(channel))
+    node = get_node(board_sn)
+    errors.error_control(node)
+    url ="http://" + IP + "/api/voltage/" + str(node) + "/" + str(channel)
+    with requests.get(url) as resp:
+        response = resp.json()
+        if "error" in response:
+            errors.error_control(-7)
+        message = f"status code: {resp.status_code}"
+        if resp.status_code != 200:
+            print(f"ERROR: {message}")
+            return 0
+    ADC_code = response["ADC_code"]
+    return ADC_code
 
 def read_channels(board_sn):
     board_sn = convert_node_to_board_sn(board_sn)
@@ -175,7 +212,7 @@ def read_channels(board_sn):
             ADC_code = response["ADC_code"]
             voltage = find_ADC_to_volt_channel(board_sn, channel, ADC_code)
             break
-        print(f"channel: {channel:3}   ADC code: {ADC_code:7}   Voltage: {round(voltage,4):7}")
+        print(f"{channel:3}   {round(voltage,3):7} V")
     return 0
 
 def ref_voltage(board_sn):
@@ -192,7 +229,7 @@ def ref_voltage(board_sn):
         if resp.status_code != 200:
             print(f"ERROR: {message}")
             return 0
-    ref_voltage = response["ref_voltage"]/1000  #mV --> V
+    ref_voltage = response["ref_voltage"]/1000
     return ref_voltage
 
 def hv_supply_voltage(board_sn):
@@ -209,8 +246,12 @@ def hv_supply_voltage(board_sn):
         if resp.status_code != 200:
             print(f"ERROR: {message}")
             return 0
-    ext_voltage = response["ext_voltage"]/1000  #mV --> V
+    ext_voltage = response["ext_voltage"]/1000
     return ext_voltage
+
+def calc_temp(ADC_code):
+    temp = 25 + (650 - (ADC_code*2048/int(0x7FFFFF)))/2.2
+    return temp
 
 def mez_temp(board_sn):
     board_sn = convert_node_to_board_sn(board_sn)
@@ -229,8 +270,8 @@ def mez_temp(board_sn):
             if resp.status_code != 200:
                 print(f"ERROR: {message}")
                 return 0
-        mez_temp = response["mez_temp"]  # ADC code
-        mez_temps["mez "+str(mez_num)] = mez_temp
+        ADC_code = response["mez_temp"]  # ADC code
+        mez_temps["mez "+str(mez_num)] = round(calc_temp(ADC_code),2)
     return mez_temps
 
 def reset(board_sn):
@@ -249,13 +290,13 @@ def print_ref_voltage(board_sn):
     print(f"Ref. voltage: {ref_voltage(board_sn)} V")
 
 def print_hv_supply_voltage(board_sn):
-    print(f"HV power supply voltage: {hv_supply_voltage(board_sn)} V")
+    print(f"HV power supply: {hv_supply_voltage(board_sn)} V")
 
 def print_mez_temp(board_sn):
     mez_temps = mez_temp(board_sn)
     for mez in mez_temps.keys():
-        print(f"{mez}: {mez_temps[mez]}")
+        print(f"{mez}: {mez_temps[mez]}°C")
 
 def print_read_channel(board_sn, channel):
-    res = read_channel(board_sn, channel)
-    print(f"ADC code: {res['ADC_code']}   Voltage: {res['voltage']}")
+    print(f"channel: {channel:3}   Voltage: {read_channel(board_sn, channel):7} V")
+
